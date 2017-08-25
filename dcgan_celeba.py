@@ -129,8 +129,8 @@ def feature_matching_loss(y_true, y_pred):
 
 
 def train():
-    x_train = np.load('cropped_celeba.npy')
-    #x_train = np.random.normal(size=(64, 64,64,3))
+    #x_train = np.load('cropped_celeba.npy')
+    x_train = np.random.normal(size=(64, 64,64,3))
     x_train = (x_train.astype(np.float32) / 127.5) - 1
 
     discriminator = discriminator_model()
