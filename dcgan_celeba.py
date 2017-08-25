@@ -21,7 +21,6 @@ from keras.optimizers import Adam
 from PIL import Image
 from keras import backend as K
 
-
 BATCH_SIZE = 64
 NUM_EPOCH = 60
 GENERATED_IMAGE_PATH = 'celeb_generated_images/'  # 生成画像の保存先
@@ -129,8 +128,8 @@ def feature_matching_loss(y_true, y_pred):
 
 
 def train():
-    #x_train = np.load('cropped_celeba.npy')
-    x_train = np.random.normal(size=(64, 64,64,3))
+    # x_train = np.load('cropped_celeba.npy')
+    x_train = np.random.normal(size=(64, 64, 64, 3))
     x_train = (x_train.astype(np.float32) / 127.5) - 1
 
     discriminator = discriminator_model()
@@ -144,7 +143,7 @@ def train():
     discriminator_hidden_model = Model(inputs=discriminator.input,
                                        outputs=discriminator.get_layer('last_hidden_layer').output)
     discriminator_hidden_model.trainable = False
-    noise_inputs = Input(shape=(100,))
+    noise_inputs = Input(shape=(100,), dtype='float32')
     generated = generator(noise_inputs)
     main_output = discriminator(generated)
     aux_output = discriminator_hidden_model(generated)
@@ -162,7 +161,7 @@ def train():
     for epoch in range(NUM_EPOCH):
         X_train = np.random.permutation(x_train)
         for index in range(num_batches):
-            noise = np.array([np.random.uniform(-1, 1, 100) for _ in range(BATCH_SIZE)])
+            noise = np.array([np.random.uniform(-1, 1, 100) for _ in range(BATCH_SIZE)]).astype(dtype=np.float32)
             image_batch = X_train[index * BATCH_SIZE:(index + 1) * BATCH_SIZE]
             generated_images = generator.predict(noise, verbose=0)
 
@@ -179,11 +178,12 @@ def train():
             d_loss = (d_loss_real + d_loss_fake) / 2
 
             expected_feature = discriminator_hidden_model.predict(image_batch)
-            noise = np.array([np.random.uniform(-1, 1, 100) for _ in range(BATCH_SIZE)])
+            noise = np.array([np.random.uniform(-1, 1, 100) for _ in range(BATCH_SIZE)]).astype(dtype=np.float32)
 
             labels = [1] * BATCH_SIZE
             g_loss = dcgan.train_on_batch(noise, [np.array(labels), expected_feature])
-            print("epoch: %d, batch: %d, g_loss: %f, d_loss: %f, fm_loss: %f" % (epoch, index, g_loss[0], d_loss, g_loss[1]))
+            print(
+            "epoch: %d, batch: %d, g_loss: %f, d_loss: %f, fm_loss: %f" % (epoch, index, g_loss[0], d_loss, g_loss[1]))
         generator.save_weights('celeb_generator.h5')
         discriminator.save_weights('celeb_discriminator.h5')
 
