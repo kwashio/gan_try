@@ -60,7 +60,7 @@ def generator_model():
 
     # output
     # (N, 64, 64, 3)
-    model.add(Conv2DTranspose(filters=3, kernel_size=5, padding='same',
+    model.add(Conv2DTranspose(filters=3, kernel_size=5, strides=2, padding='same',
                               kernel_initializer=init))
     model.add(Activation('tanh'))
 
@@ -72,7 +72,7 @@ def discriminator_model():
     model = Sequential()
 
     # (N, 32, 32, 64)
-    model.add(Conv2D(filters=64, kernel_size=5, padding='same', input_shape=(32, 32, 3),
+    model.add(Conv2D(filters=64, kernel_size=5, padding='same', strides=2, input_shape=(64, 64, 3),
                      kernel_initializer='TruncatedNormal'))
     model.add(LeakyReLU(0.2))
 
