@@ -173,8 +173,8 @@ def train():
                 Image.fromarray(image.astype(np.uint8)) \
                     .save(GENERATED_IMAGE_PATH + "{0}_{1}.png".format(epoch, index))
 
-            d_loss_real = discriminator.train_on_batch(image_batch, [1] * BATCH_SIZE)
-            d_loss_fake = discriminator.train_on_batch(generated_images, [0] * BATCH_SIZE)
+            d_loss_real = discriminator.train_on_batch(x=image_batch, y=np.array([1] * BATCH_SIZE))
+            d_loss_fake = discriminator.train_on_batch(x=generated_images, y=np.array([0] * BATCH_SIZE))
             d_loss = (d_loss_real + d_loss_fake) / 2
 
             expected_feature = discriminator_hidden_model.predict(image_batch)
